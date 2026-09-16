@@ -1,6 +1,6 @@
 {
   "name": "peru-ubigeo",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Librería ligera y actualizada para consultar códigos de Ubigeo del Perú (Departamentos, Provincias y Distritos). Soporte TypeScript.",
   "homepage": "https://github.com/Komarcalabs/ubigeoperu#readme",
   "author": {
