@@ -1,69 +1,128 @@
-# ubigeoperu [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
-> Simple libreria para consultar codigos de ubigeo
+<div align="center">
+  
+# 🇵🇪 Peru Ubigeo
 
-## Installation
+**Librería simple, moderna y actualizada para consultar códigos de ubigeo del Perú**
 
-```sh
-$ npm install --save peru-ubigeo
+[![NPM Version](https://badge.fury.io/js/peru-ubigeo.svg)](https://npmjs.org/package/peru-ubigeo)
+[![Build Status](https://github.com/Komarcalabs/ubigeoperu/actions/workflows/ci.yml/badge.svg)](https://github.com/Komarcalabs/ubigeoperu/actions/workflows/ci.yml)
+[![Dependency Status](https://david-dm.org/Komarcalabs/ubigeoperu.svg?theme=shields.io)](https://david-dm.org/Komarcalabs/ubigeoperu)
+[![Coverage percentage](https://coveralls.io/repos/Komarcalabs/ubigeoperu/badge.svg)](https://coveralls.io/r/Komarcalabs/ubigeoperu)
+
+*Supported by **[KomarcaLabs](https://github.com/Komarcalabs)***
+  
+</div>
+
+---
+
+`peru-ubigeo` es una herramienta ligera para Node.js y TypeScript que te permite obtener fácilmente los **Departamentos, Provincias y Distritos** del Perú de acuerdo a sus Códigos de Ubicación Geográfica (Ubigeo).
+
+✨ **Características principales:**
+- 🔄 **Datos al día**: Incluye los distritos peruanos de más reciente creación.
+- 📘 **TypeScript Ready**: Cuenta con tipado completo (`index.d.ts`) nativo.
+- ⚡ **Sin dependencias**: Muy liviano, carga instantánea y huella de memoria nula.
+- 🌳 **Navegación en Árbol**: Navega jerárquicamente desde el departamento hasta sus distritos.
+
+---
+
+## 📦 Instalación
+
+Usando npm:
+```bash
+npm install peru-ubigeo
 ```
 
-## Usage
+Usando yarn:
+```bash
+yarn add peru-ubigeo
+```
 
-```js
+---
+
+## 🚀 Uso Rápido (JavaScript)
+
+```javascript
 const Ubigeoperu = require('peru-ubigeo');
+const ubigeo = new Ubigeoperu();
 
-var ubigeo=new Ubigeoperu()
+// Obtener un listado de todos los departamentos
+const regiones = ubigeo.getRegions();
+console.log(regiones[0]); 
+// { id: '01', name: 'Amazonas', level: 'department' }
 
-> Para listar todas las regiones:
-var regions= ubigeo.getRegions()
-[{id,name,level},{}.{}]
-
-
-* Cada uno de los items es una instancia y cuenta con los siguientes metodos dependiendo del level que maneje:
-    Asi por ejemplo para obtener las provincias de una region, probaremos con la primera del array.
-    var oneRegion=regions[0];
-    var provinces= oneRegion.provinces() 
-    [{id,name,level},{},{}]
-
-* Nos devuelve una lista de provincias si deseamos un distrito de una instancia en particular realizamos lo siguiente:
-
-    var oneProvince=provinces[0];
-    var districts= oneProvince.districts();
-    -> De esta manera llegamos hasta el distrito.
-
-También se cuenta con los siguientes metodos:
-
-**METODOS GENERALES
-
-ubigeo.getRegions(codeOrName)  -> codeOrName [EL CODIGO O EL NOMBRE DE LA REGION]
-*Retornara una region en particular a  partir de la cual obtener el resto del arbol.
-
-ubigeo.getProvinces(codeOrName)  -> codeOrName [EL CODIGO O EL NOMBRE DE LA PROVINCIA]
-*Retornara una provincia en particular a  partir de la cual obtener el resto del arbol.
-
-ubigeo.getDistricts(codeOrName)  -> codeOrName [EL CODIGO O EL NOMBRE DEL DISTRITO]
-*Retornara un distrito en particular a  partir de la cual obtener el resto del arbol.
-
-ubigeo.getByUbigeoCode(code) > te retorna una instancia en especifico
-
-
-**METODOS DE INSTANCIA
-doc.provinces() -> Retorna el listado de provincias que pertenecens a doc.
-
-doc.districts() -> Retorna el listado de distritos que pertenecen a doc.
-
-
+// Buscar distritos directamente por nombre o código
+const distrito = ubigeo.getDistricts('Miraflores');
+console.log(distrito);
 ```
-## License
 
-MIT © [Lord Dicus, amor y señor de la KOMARCA]()
+---
 
+## 📘 Uso con TypeScript
 
-[npm-image]: https://badge.fury.io/js/ubigeoperu.svg
-[npm-url]: https://npmjs.org/package/ubigeoperu
-[travis-image]: https://travis-ci.com/Rikhart/ubigeoperu.svg?branch=master
-[travis-url]: https://travis-ci.com/Rikhart/ubigeoperu
-[daviddm-image]: https://david-dm.org/Rikhart/ubigeoperu.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/Rikhart/ubigeoperu
-[coveralls-image]: https://coveralls.io/repos/Rikhart/ubigeoperu/badge.svg
-[coveralls-url]: https://coveralls.io/r/Rikhart/ubigeoperu
+La librería está 100% tipada, ofreciendo autocompletado nativo y validación en tiempo de compilación.
+
+```typescript
+import Ubigeoperu from 'peru-ubigeo';
+
+const ubigeo = new Ubigeoperu();
+
+const limaRegion = ubigeo.getRegions('15');
+
+if (limaRegion && !Array.isArray(limaRegion)) {
+  console.log(`Region: ${limaRegion.name}`); // Region: Lima
+  
+  // Extraer las provincias del departamento (Devuelve instancias de UbigeoItem)
+  const provincias = limaRegion.provinces();
+  
+  if (provincias) {
+    const limaProvincia = provincias.find(p => p.name === 'Lima');
+    console.log(limaProvincia?.districts()); 
+  }
+}
+```
+
+---
+
+## 📖 API de Métodos Generales
+
+Al instanciar la clase principal, contarás con los siguientes métodos para hacer consultas globales. Todos estos métodos pueden recibir un Código numérico o un Nombre, y devolverán el `UbigeoItem` correspondiente. Si no se provee argumento, devuelven la colección completa.
+
+### `ubigeo.getRegions([codeOrName])`
+Busca un Departamento/Región. 
+* Ejemplos de argumentos válidos: `'15'`, `'Lima'`, `'01'`, `'Amazonas'`.
+
+### `ubigeo.getProvinces([codeOrName])`
+Busca una Provincia. 
+* Ejemplos de argumentos válidos: `'1501'`, `'Lima'`, `'0101'`, `'Chachapoyas'`.
+
+### `ubigeo.getDistricts([codeOrName])`
+Busca un Distrito. 
+* Ejemplos de argumentos válidos: `'150122'`, `'Miraflores'`.
+
+### `ubigeo.getByUbigeoCode(code)`
+Retorna la instancia específica analizando la longitud del código (2 dígitos = Región, 4 dígitos = Provincia, 6 dígitos = Distrito).
+
+---
+
+## 🌲 Navegación en Árbol (UbigeoItem)
+
+Todos los métodos globales devuelven objetos de tipo `UbigeoItem`. Estos objetos no solo contienen la data plana, sino que también poseen métodos para explorar hacia abajo en el árbol geográfico:
+
+- **`doc.provinces()`**
+  Solo aplicable a nivel `department`. Retorna el listado de provincias (`UbigeoItem[]`) que pertenecen a ese departamento.
+
+- **`doc.districts()`**
+  Solo aplicable a nivel `province`. Retorna el listado de distritos (`UbigeoItem[]`) que pertenecen a esa provincia.
+
+*Ejemplo:*
+```javascript
+const departamento = ubigeo.getRegions('15');
+const provincias = departamento.provinces();
+const distritosPrimeraProv = provincias[0].districts();
+```
+
+---
+
+## 📝 License
+
+Este proyecto es distribuido bajo la licencia **MIT** © [Lord Dicus, amo y señor de la KOMARCA](https://github.com/Komarcalabs) y **KomarcaLabs**.
